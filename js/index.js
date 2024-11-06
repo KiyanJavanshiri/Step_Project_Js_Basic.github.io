@@ -243,3 +243,63 @@ const DATA = [
   },
 ];
 
+// * Початок роботи
+const trainersCardsList = document.querySelector(".trainers-cards__container");
+document.addEventListener("DOMContentLoaded", () => {
+  const trainerCardTemplate = document.querySelector("#trainer-card");
+  const fragment = document.createDocumentFragment();
+  DATA.forEach((obj) => {
+    let trainerCard = trainerCardTemplate.content.cloneNode(true);
+    const trainerPhoto = trainerCard.querySelector("img");
+    trainerPhoto.setAttribute("src", `${obj["photo"]}`);
+    const trainerName = trainerCard.querySelector(".trainer__name");
+    trainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
+    fragment.append(trainerCard);
+  });
+  trainersCardsList.append(fragment);
+});
+const filterSidebar = document.querySelector(".sidebar");
+const sortSidebar = document.querySelector(".sorting");
+filterSidebar.removeAttribute("hidden");
+sortSidebar.removeAttribute("hidden");
+
+// * Модалка
+trainersCardsList.addEventListener("click", (e) => {
+  const modalTemplate = document.querySelector("#modal-template");
+  const modalTrainer = modalTemplate.content.cloneNode(true);
+  const modalBody = modalTrainer.querySelector(".modal__body");
+  const modalCloseBtn = modalBody.querySelector(".modal__close");
+  const modalDesc = modalBody.querySelector(".modal__description");
+  if (e.target.closest("button")) {
+    let card = e.target.closest("li");
+    let cardPhoto = card.querySelector("img");
+    DATA.forEach((obj) => {
+      if (cardPhoto.getAttribute("src") === obj["photo"]) {
+        const modalTrainerPhoto = modalBody.querySelector("img");
+        const modalTrainerName = modalDesc.querySelector(".modal__name");
+        const modalTrainerCategory = modalDesc.querySelector(
+          ".modal__point--category"
+        );
+        const modalTrainerExperience = modalDesc.querySelector(
+          ".modal__point--experience"
+        );
+        const modalTrainerSpecialization = modalDesc.querySelector(
+          ".modal__point--specialization"
+        );
+        const modalTrainerText = modalDesc.querySelector(".modal__text");
+        modalTrainerPhoto.setAttribute("src", `${obj["photo"]}`);
+        modalTrainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
+        modalTrainerCategory.textContent = `Категорія: ${obj["category"]}`;
+        modalTrainerExperience.textContent = `Досвід: ${obj["experience"]}`;
+        modalTrainerSpecialization.textContent = ` Напрям тренера: ${obj["specialization"]}`;
+        modalTrainerText.textContent = `Досвід: ${obj["description"]}`;
+      }
+      const wrapper = document.createElement("div");
+      wrapper.append(modalTrainer);
+      document.body.append(wrapper);
+      modalCloseBtn.addEventListener("click", () => {
+        wrapper.remove();
+      });
+    });
+  }
+});
