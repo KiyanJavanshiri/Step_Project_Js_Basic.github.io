@@ -245,8 +245,8 @@ const DATA = [
 
 // * Початок роботи
 const trainersCardsList = document.querySelector(".trainers-cards__container");
+const trainerCardTemplate = document.querySelector("#trainer-card");
 document.addEventListener("DOMContentLoaded", () => {
-  const trainerCardTemplate = document.querySelector("#trainer-card");
   const fragment = document.createDocumentFragment();
   DATA.forEach((obj) => {
     let trainerCard = trainerCardTemplate.content.cloneNode(true);
@@ -275,6 +275,8 @@ trainersCardsList.addEventListener("click", (e) => {
     let cardPhoto = card.querySelector("img");
     DATA.forEach((obj) => {
       if (cardPhoto.getAttribute("src") === obj["photo"]) {
+        document.body.style.overflow = "hidden";
+
         const modalTrainerPhoto = modalBody.querySelector("img");
         const modalTrainerName = modalDesc.querySelector(".modal__name");
         const modalTrainerCategory = modalDesc.querySelector(
@@ -287,19 +289,69 @@ trainersCardsList.addEventListener("click", (e) => {
           ".modal__point--specialization"
         );
         const modalTrainerText = modalDesc.querySelector(".modal__text");
+
         modalTrainerPhoto.setAttribute("src", `${obj["photo"]}`);
         modalTrainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
         modalTrainerCategory.textContent = `Категорія: ${obj["category"]}`;
         modalTrainerExperience.textContent = `Досвід: ${obj["experience"]}`;
         modalTrainerSpecialization.textContent = ` Напрям тренера: ${obj["specialization"]}`;
         modalTrainerText.textContent = `Досвід: ${obj["description"]}`;
+        const modalElement = modalTrainer.firstElementChild;
+        document.body.append(modalElement);
+        modalCloseBtn.addEventListener("click", () => {
+          modalElement.remove();
+          document.body.style.overflow = "";
+        });
       }
-      const wrapper = document.createElement("div");
-      wrapper.append(modalTrainer);
-      document.body.append(wrapper);
-      modalCloseBtn.addEventListener("click", () => {
-        wrapper.remove();
-      });
     });
+  }
+});
+
+// * Сортування
+sortSidebar.addEventListener("click", (e) => {
+  const allSortBtns = [...sortSidebar.querySelectorAll(".sorting__btn")];
+  const lastNameSortFragment = document.createDocumentFragment();
+  if (e.target.closest("button")) {
+    const sortBtn = e.target.closest("button");
+    allSortBtns.forEach((el) => {
+      el.classList.remove("sorting__btn--active");
+    });
+    e.target.classList.add("sorting__btn--active");
+    if (sortBtn.textContent.trim() === "ЗА ПРІЗВИЩЕМ") {
+      const lastNameSorted = DATA.sort((a, b) => {
+        if (a["last name"].toLowerCase() > b["last name"].toLowerCase()) {
+          return 1;
+        }
+        if (a["last name"].toLowerCase() < b["last name"].toLowerCase()) {
+          return -1;
+        }
+        return 0;
+      });
+      lastNameSorted.forEach((obj) => {
+        let trainerCard = trainerCardTemplate.content.cloneNode(true);
+        const trainerPhoto = trainerCard.querySelector("img");
+        trainerPhoto.setAttribute("src", `${obj["photo"]}`);
+        const trainerName = trainerCard.querySelector(".trainer__name");
+        trainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
+        lastNameSortFragment.append(trainerCard);
+      });
+      trainersCardsList.innerHTML = "";
+      trainersCardsList.append(lastNameSortFragment);
+    }
+    if (sortBtn.textContent.trim() === "ЗА ДОСВІДОМ") {
+      const experienceSorted = DATA.sort((a, b) => {
+        return 0;
+      });
+      experienceSorted.forEach((obj) => {
+        let trainerCard = trainerCardTemplate.content.cloneNode(true);
+        const trainerPhoto = trainerCard.querySelector("img");
+        trainerPhoto.setAttribute("src", `${obj["photo"]}`);
+        const trainerName = trainerCard.querySelector(".trainer__name");
+        trainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
+        lastNameSortFragment.append(trainerCard);
+      });
+      trainersCardsList.innerHTML = "";
+      trainersCardsList.append(lastNameSortFragment);
+    }
   }
 });
