@@ -244,11 +244,12 @@ const DATA = [
 ];
 
 // * Початок роботи
+const originalData = [...DATA];
 const trainersCardsList = document.querySelector(".trainers-cards__container");
 const trainerCardTemplate = document.querySelector("#trainer-card");
-document.addEventListener("DOMContentLoaded", () => {
+const creatCards = (data) => {
   const fragment = document.createDocumentFragment();
-  DATA.forEach((obj) => {
+  data.forEach((obj) => {
     let trainerCard = trainerCardTemplate.content.cloneNode(true);
     const trainerPhoto = trainerCard.querySelector("img");
     trainerPhoto.setAttribute("src", `${obj["photo"]}`);
@@ -256,7 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
     trainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
     fragment.append(trainerCard);
   });
+  trainersCardsList.innerHTML = "";
   trainersCardsList.append(fragment);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  creatCards(originalData);
 });
 const filterSidebar = document.querySelector(".sidebar");
 const sortSidebar = document.querySelector(".sorting");
@@ -310,7 +315,6 @@ trainersCardsList.addEventListener("click", (e) => {
 // * Сортування
 sortSidebar.addEventListener("click", (e) => {
   const allSortBtns = [...sortSidebar.querySelectorAll(".sorting__btn")];
-  const lastNameSortFragment = document.createDocumentFragment();
   if (e.target.closest("button")) {
     const sortBtn = e.target.closest("button");
     allSortBtns.forEach((el) => {
@@ -327,31 +331,16 @@ sortSidebar.addEventListener("click", (e) => {
         }
         return 0;
       });
-      lastNameSorted.forEach((obj) => {
-        let trainerCard = trainerCardTemplate.content.cloneNode(true);
-        const trainerPhoto = trainerCard.querySelector("img");
-        trainerPhoto.setAttribute("src", `${obj["photo"]}`);
-        const trainerName = trainerCard.querySelector(".trainer__name");
-        trainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
-        lastNameSortFragment.append(trainerCard);
-      });
-      trainersCardsList.innerHTML = "";
-      trainersCardsList.append(lastNameSortFragment);
+      creatCards(lastNameSorted);
     }
     if (sortBtn.textContent.trim() === "ЗА ДОСВІДОМ") {
       const experienceSorted = DATA.sort((a, b) => {
-        return 0;
+        return +a["experience"].split(" ")[0] - +b["experience"].split(" ")[0]
       });
-      experienceSorted.forEach((obj) => {
-        let trainerCard = trainerCardTemplate.content.cloneNode(true);
-        const trainerPhoto = trainerCard.querySelector("img");
-        trainerPhoto.setAttribute("src", `${obj["photo"]}`);
-        const trainerName = trainerCard.querySelector(".trainer__name");
-        trainerName.textContent = `${obj["last name"]} ${obj["first name"]}`;
-        lastNameSortFragment.append(trainerCard);
-      });
-      trainersCardsList.innerHTML = "";
-      trainersCardsList.append(lastNameSortFragment);
+      creatCards(experienceSorted);
+    }
+    if (sortBtn.textContent.trim() === "ЗА замовчуванням") {
+      creatCards(originalData);
     }
   }
 });
