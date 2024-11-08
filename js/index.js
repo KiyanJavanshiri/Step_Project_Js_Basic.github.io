@@ -345,9 +345,36 @@ sortSidebar.addEventListener("click", (e) => {
   }
 });
 
-// * Фільтрація 
+// * Фільтрація
 const filterForm = filterSidebar.querySelector("form");
-const fieldsets = [...filterForm.querySelectorAll("fieldset")];
+const inputDirection = [...filterForm.querySelectorAll("[name='direction']")];
+const inputCategory = [...filterForm.querySelectorAll("[name='category']")];
+const translation = {
+  "all-direction": "ВСІ",
+  gym: "Тренажерний зал",
+  "fight-club": "Бійцівський клуб",
+  "kids-club": "Дитячий клуб",
+  "swimming-pool": "Басейн",
+  "all-category": "ВСІ",
+  master: "майстер",
+  specialist: "спеціаліст",
+  instructor: "інструктор",
+};
 filterForm.addEventListener("submit", (e) => {
   e.preventDefault();
-})
+  let filteredList = [];
+  const directionInput = filterForm
+    .querySelector("input[name = direction]:checked")
+    .getAttribute("id");
+  const categoryInput = filterForm
+    .querySelector("input[name = category]:checked")
+    .getAttribute("id");
+  const translatedDirection = translation[directionInput];
+  const translatedCategory = translation[categoryInput];
+  if(translatedDirection !== "ВСІ" && translatedCategory !== "ВСІ") {
+    filteredList = DATA.filter((el) => {
+      return el["specialization"] === translatedDirection && el["category"] === translatedCategory;
+    });
+    creatCards(filteredList);
+  }
+});
