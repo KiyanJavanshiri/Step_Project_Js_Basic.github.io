@@ -259,7 +259,7 @@ const creatCards = (data) => {
   });
   trainersCardsList.innerHTML = "";
   trainersCardsList.append(fragment);
-}
+};
 document.addEventListener("DOMContentLoaded", () => {
   creatCards(originalData);
 });
@@ -278,7 +278,7 @@ trainersCardsList.addEventListener("click", (e) => {
   if (e.target.closest("button")) {
     let card = e.target.closest("li");
     let cardPhoto = card.querySelector("img");
-    DATA.forEach((obj) => {
+    originalData.forEach((obj) => {
       if (cardPhoto.getAttribute("src") === obj["photo"]) {
         document.body.style.overflow = "hidden";
 
@@ -335,7 +335,7 @@ sortSidebar.addEventListener("click", (e) => {
     }
     if (sortBtn.textContent.trim() === "ЗА ДОСВІДОМ") {
       const experienceSorted = DATA.sort((a, b) => {
-        return +a["experience"].split(" ")[0] - +b["experience"].split(" ")[0]
+        return b["experience"].split(" ")[0] - +a["experience"].split(" ")[0];
       });
       creatCards(experienceSorted);
     }
@@ -344,3 +344,10 @@ sortSidebar.addEventListener("click", (e) => {
     }
   }
 });
+
+// * Фільтрація 
+const filterForm = filterSidebar.querySelector("form");
+const fieldsets = [...filterForm.querySelectorAll("fieldset")];
+filterForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+})
