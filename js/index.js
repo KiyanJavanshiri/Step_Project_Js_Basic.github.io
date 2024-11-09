@@ -244,7 +244,9 @@ const DATA = [
 ];
 
 // * Початок роботи
+const preloader = document.querySelector("#preloader");
 const originalData = [...DATA];
+const mainSection = document.querySelector(".page-main");
 const trainersCardsList = document.querySelector(".trainers-cards__container");
 const trainerCardTemplate = document.querySelector("#trainer-card");
 const creatCards = (data) => {
@@ -262,6 +264,7 @@ const creatCards = (data) => {
 };
 document.addEventListener("DOMContentLoaded", () => {
   creatCards(originalData);
+  preloader.remove();
 });
 const filterSidebar = document.querySelector(".sidebar");
 const sortSidebar = document.querySelector(".sorting");
@@ -371,25 +374,28 @@ filterForm.addEventListener("submit", (e) => {
     .getAttribute("id");
   const translatedDirection = translation[directionInput];
   const translatedCategory = translation[categoryInput];
-  if(translatedDirection !== "ВСІ" && translatedCategory !== "ВСІ") {
+  if (translatedDirection !== "ВСІ" && translatedCategory !== "ВСІ") {
     filteredList = DATA.filter((el) => {
-      return el["specialization"] === translatedDirection && el["category"] === translatedCategory;
+      return (
+        el["specialization"] === translatedDirection &&
+        el["category"] === translatedCategory
+      );
     });
     creatCards(filteredList);
   }
-  if(translatedDirection !== "ВСІ" && translatedCategory === "ВСІ") {
+  if (translatedDirection !== "ВСІ" && translatedCategory === "ВСІ") {
     filteredList = DATA.filter((el) => {
       return el["specialization"] === translatedDirection;
-    })
+    });
     creatCards(filteredList);
   }
-  if(translatedCategory !== "ВСІ" && translatedDirection === "ВСІ") {
+  if (translatedCategory !== "ВСІ" && translatedDirection === "ВСІ") {
     filteredList = DATA.filter((el) => {
       return el["category"] === translatedCategory;
-    })
+    });
     creatCards(filteredList);
   }
-  if(translatedDirection === "ВСІ" && translatedCategory === "ВСІ") {
+  if (translatedDirection === "ВСІ" && translatedCategory === "ВСІ") {
     creatCards(originalData);
   }
 });
