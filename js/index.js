@@ -377,4 +377,19 @@ filterForm.addEventListener("submit", (e) => {
     });
     creatCards(filteredList);
   }
+  if(translatedDirection !== "ВСІ" && translatedCategory === "ВСІ") {
+    filteredList = DATA.filter((el) => {
+      return el["specialization"] === translatedDirection;
+    })
+    creatCards(filteredList);
+  }
+  if(translatedCategory !== "ВСІ" && translatedDirection === "ВСІ") {
+    filteredList = DATA.filter((el) => {
+      return el["category"] === translatedCategory;
+    })
+    creatCards(filteredList);
+  }
+  if(translatedDirection === "ВСІ" && translatedCategory === "ВСІ") {
+    creatCards(originalData);
+  }
 });
