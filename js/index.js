@@ -315,39 +315,6 @@ trainersCardsList.addEventListener("click", (e) => {
   }
 });
 
-// * Сортування
-sortSidebar.addEventListener("click", (e) => {
-  const allSortBtns = [...sortSidebar.querySelectorAll(".sorting__btn")];
-  if (e.target.closest("button")) {
-    const sortBtn = e.target.closest("button");
-    allSortBtns.forEach((el) => {
-      el.classList.remove("sorting__btn--active");
-    });
-    e.target.classList.add("sorting__btn--active");
-    if (sortBtn.textContent.trim() === "ЗА ПРІЗВИЩЕМ") {
-      const lastNameSorted = DATA.sort((a, b) => {
-        if (a["last name"].toLowerCase() > b["last name"].toLowerCase()) {
-          return 1;
-        }
-        if (a["last name"].toLowerCase() < b["last name"].toLowerCase()) {
-          return -1;
-        }
-        return 0;
-      });
-      creatCards(lastNameSorted);
-    }
-    if (sortBtn.textContent.trim() === "ЗА ДОСВІДОМ") {
-      const experienceSorted = DATA.sort((a, b) => {
-        return b["experience"].split(" ")[0] - +a["experience"].split(" ")[0];
-      });
-      creatCards(experienceSorted);
-    }
-    if (sortBtn.textContent.trim() === "ЗА замовчуванням") {
-      creatCards(originalData);
-    }
-  }
-});
-
 // * Фільтрація
 const filterForm = filterSidebar.querySelector("form");
 const inputDirection = [...filterForm.querySelectorAll("[name='direction']")];
@@ -363,9 +330,9 @@ const translation = {
   specialist: "спеціаліст",
   instructor: "інструктор",
 };
+let filteredList = [...DATA];
 filterForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  let filteredList = [];
   const directionInput = filterForm
     .querySelector("input[name = direction]:checked")
     .getAttribute("id");
@@ -381,21 +348,55 @@ filterForm.addEventListener("submit", (e) => {
         el["category"] === translatedCategory
       );
     });
-    creatCards(filteredList);
-  }
-  if (translatedDirection !== "ВСІ" && translatedCategory === "ВСІ") {
+  } else if (translatedDirection !== "ВСІ" && translatedCategory === "ВСІ") {
     filteredList = DATA.filter((el) => {
       return el["specialization"] === translatedDirection;
     });
-    creatCards(filteredList);
-  }
-  if (translatedCategory !== "ВСІ" && translatedDirection === "ВСІ") {
+  } else if (translatedCategory !== "ВСІ" && translatedDirection === "ВСІ") {
     filteredList = DATA.filter((el) => {
       return el["category"] === translatedCategory;
     });
+  } else {
+    filteredList = [...DATA];
+  }
+  applySort();
+});
+
+// * Сортування
+const applySort = () => {
+  const sortBtn = document.querySelector(".sorting__btn--active");
+  if (sortBtn.textContent.trim() === "ЗА ПРІЗВИЩЕМ") {
+    filteredList.sort((a, b) => {
+      if (a["last name"].toLowerCase() > b["last name"].toLowerCase()) {
+        return 1;
+      }
+      if (a["last name"].toLowerCase() < b["last name"].toLowerCase()) {
+        return -1;
+      }
+      return 0;
+    });
     creatCards(filteredList);
   }
-  if (translatedDirection === "ВСІ" && translatedCategory === "ВСІ") {
-    creatCards(originalData);
+  if (sortBtn.textContent.trim() === "ЗА ДОСВІДОМ") {
+    filteredList.sort((a, b) => {
+      return b["experience"].split(" ")[0] - +a["experience"].split(" ")[0];
+    });
+    creatCards(filteredList);
+  }
+  if (sortBtn.textContent.trim() === "ЗА замовчуванням") {
+    filteredList.sort((a, b) => {
+      return DATA.indexOf(a) - DATA.indexOf(b);
+    });
+    creatCards(filteredList);
+  }
+};
+sortSidebar.addEventListener("click", (e) => {
+  const allSortBtns = [...sortSidebar.querySelectorAll(".sorting__btn")];
+  if (e.target.closest("button")) {
+    allSortBtns.forEach((el) => {
+      el.classList.remove("sorting__btn--active");
+    });
+    e.target.classList.add("sorting__btn--active");
+    applySort();
   }
 });
